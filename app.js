@@ -42,6 +42,35 @@ app.get('/sum', (req, res) => {
 
 });
 
-app.listen(8000, () => {
-  console.log('Express server is listening on port 8000!');
+app.get('/cipher', (req, res) => {
+  const { text, shift } = req.query;
+
+  if (!text) {
+    return res
+      .status(400)
+      .send('must include some text');
+  }
+  if (!shift) {
+    return res
+      .status(400)
+      .send('Caeser must be paid his due');
+  }
+
+  const response = caesar(text, shift)
+
+  return res
+    .status(200)
+    .send(response);
+
 });
+
+
+app.listen(8080, () => {
+  console.log('Express server is listening on port 8080!');
+});
+
+const caesar = (text, shift) => {
+  return String.fromCharCode(
+    ...text.split('').map(char => ((char.charCodeAt() - 97 + shift) % 26) + 97),
+  );
+};
