@@ -1,5 +1,7 @@
 'use strict';
 
+//Drill 1
+
 const express = require('express');
 const morgan = require('morgan');
 
@@ -42,6 +44,9 @@ app.get('/sum', (req, res) => {
 
 });
 
+
+//Drill 2
+
 app.get('/cipher', (req, res) => {
   const { text, shift } = req.query;
 
@@ -71,6 +76,74 @@ app.listen(8080, () => {
 
 const caesar = (text, shift) => {
   return String.fromCharCode(
-    ...text.split('').map(char => ((char.charCodeAt() - 97 + shift) % 26) + 97),
+    ...text.split('').map(char => ((char.charCodeAt() - 97 + shift) % 26) + 97)
   );
 };
+
+//Drill 3
+
+app.get('/lotto', (req, res) => {
+  let { numbers } = req.query;
+
+  numbers = numbers.map((num) => parseInt(num));
+
+  if (!numbers) {
+    return res
+      .status(400)
+      .send('number is required');
+  }
+
+  if (!Array.isArray(numbers)) {
+    return res
+      .status(400)
+      .send('number must be an array');
+  }
+
+  if (!numbers.length === 6) {
+    return res
+      .status(400)
+      .send('there must be 6 numbers');
+  }
+  if (Number.isInteger(numbers)) {
+    return res
+      .status(400)
+      .send('must be a number');
+  }
+  var unique = numbers.filter((v, i, a) => a.indexOf(v) === i);
+  if (!unique.length === 6) {
+    return res
+      .status(400)
+      .send('each number must be unique');
+  }
+
+  let lotto = [];
+  for (let i = 0; i < 6; i++) {
+    lotto.push(Math.ceil(Math.random() * 20));
+  }
+  console.log(lotto);
+  console.log(numbers);
+ 
+
+  let union = [...new Set([...lotto, ...numbers])];
+
+  if (union.length === 6) {
+    return res
+      .send('Wow! Unbelievable! You could have won the mega millions!');
+  }
+  else if (union.length === 7) {
+    return res
+      .send('Congrats! You won $100');
+  }
+  else if (union.length === 8) {
+    return res
+      .send('Congrats! you won a free ticket');
+  }
+  else {
+    return res
+      .send('Sorry, you lose');
+  }
+
+});
+app.listen(8090, () => {
+  console.log('Express server is listening on port 8090!');
+});
